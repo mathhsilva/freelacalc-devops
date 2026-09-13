@@ -29,3 +29,52 @@ jobs:
       - name: Executar testes automatizados
         run: npm test
 
+  notify:
+    name: Enviar alerta ao Discord
+    needs: test
+    if: ${{ always() && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    steps:
+      - name: Notificar resultado dos testes
+        uses: actions/github-script@v7
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          TEST_RESULT: ${{ needs.test.result }}
+        with:
+          script: |
+            const webhook = process.env.DISCORD_WEBHOOK_URL;
+            if (!webhook) {
+              core.setFailed('Cadastre o secret DISCORD_WEBHOOK_URL no repositório.');
+              return;
+            }
+
+            const results = { success: 'APROVADO', failure: 'FALHOU', cancelled: 'CANCELADO', skipped: 'NÃO EXECUTADO' };
+            const result = results[process.env.TEST_RESULT] || process.env.TEST_RESULT;
+            const repo = `${context.repo.owner}/${context.repo.repo}`;
+            const pr = context.payload.pull_request;
+            const source = pr ? `PR #${pr.number}` : `Push em ${context.ref.replace('refs/heads/', '')}`;
+            const commit = (pr ? pr.head.sha : context.sha).slice(0, 7);
+            const runUrl = `${context.serverUrl}/${repo}/actions/runs/${context.runId}`;
+            const content = [
+              `**FreelaCalc — Testes: ${result}**`,
+              `Repositório: ${repo}`,
+              `Evento: ${source} | Commit: ${commit}`,
+              `Execução: ${runUrl}`
+            ].join('\n');
+
+            try {
+              const url = new URL(webhook);
+              url.searchParams.set('wait', 'true');
+              const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content, allowed_mentions: { parse: [] } }),
+                signal: AbortSignal.timeout(15000)
+              });
+              if (!response.ok) throw new Error('Envio recusado');
+              core.info('Alerta entregue ao Discord.');
+            } catch {
+              core.setFailed('Não foi possível enviar o alerta. Verifique o webhook e a disponibilidade do Discord.');
+            }
