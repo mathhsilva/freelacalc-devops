@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Calcule rapidamente um preço sustentável para seu próximo projeto freelancer."
+    />
+    <title>FreelaCalc | Orçamento para freelancers</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <section class="intro" aria-labelledby="page-title">
+        <span class="eyebrow">Planeje melhor. Cobre com confiança.</span>
+        <h1 id="page-title">Seu próximo projeto começa com um preço justo.</h1>
+        <p>
+          Transforme horas, custos e imprevistos em um orçamento claro — sem planilhas
+          complicadas.
+        </p>
+        <ul>
+          <li><strong>Rápido</strong><span>Resultado em segundos</span></li>
+          <li><strong>Transparente</strong><span>Detalhamento do valor</span></li>
+          <li><strong>Responsivo</strong><span>Funciona em qualquer tela</span></li>
+        </ul>
+      </section>
+
+      <section class="calculator-card" aria-labelledby="calculator-title">
+        <div class="card-heading">
+          <span class="brand-mark">F</span>
+          <div>
+            <p>FreelaCalc</p>
+            <h2 id="calculator-title">Monte seu orçamento</h2>
+          </div>
+        </div>
+
+        <form id="quote-form">
+          <label>
+            Horas estimadas
+            <input id="hours" name="hours" type="number" min="0" step="0.5" value="20" required />
+          </label>
+          <label>
+            Valor por hora (R$)
+            <input id="hourly-rate" name="hourlyRate" type="number" min="0" step="0.01" value="80" required />
+          </label>
+          <label>
+            Custos adicionais (R$)
+            <input id="extra-costs" name="extraCosts" type="number" min="0" step="0.01" value="200" />
+          </label>
+          <label>
+            Margem de segurança (%)
+            <input id="safety-margin" name="safetyMargin" type="number" min="0" step="1" value="10" />
+          </label>
+          <button type="submit">Calcular orçamento</button>
+        </form>
+
+        <div id="result" class="result" aria-live="polite" hidden>
+          <div><span>Mão de obra</span><strong id="labor-result"></strong></div>
+          <div><span>Custos + margem</span><strong id="extras-result"></strong></div>
+          <div class="total"><span>Valor sugerido</span><strong id="total-result"></strong></div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="src/app.js"></script>
+  </body>
+</html>
+
