@@ -1,0 +1,14 @@
+{
+  "name": "freelacalc",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Calculadora de orçamento para projetos freelancer",
+  "scripts": {
+    "test": "node --test",
+    "check": "node --check src/calculator.js && node --check src/app.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
